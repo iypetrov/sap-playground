@@ -1,0 +1,5 @@
+btp_globalaccount  = "00000000-0000-0000-0000-000000000000"
+btp_subaccount     = "11111111-1111-1111-1111-111111111111"
+btp_username       = "john.doe@mycompany.com"
+btp_password       = "TopSecret"
+btp_cli_server_url = "https://cli.btp.cloud.sap"
