@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Configure Shoot cluster control plane observability signals (metrics, logs, events)
+# to be forwarded to SAP Cloud Logging.
 
 set -e
 
@@ -8,6 +10,7 @@ _PROJECT_DIR="${_SCRIPT_DIR}/.."
 
 # Main entrypoint
 function _main() {
+    # Retrieve SAP Cloud Logging instance credentials from Terraform state.
     local _cl_creds=$( terraform output -raw cloud_logging_credentials )
     local _dashboards_endpoint=$( echo "${_cl_creds}" | jq -r '.["dashboards-endpoint"]' )
     local _dashboards_username=$( echo "${_cl_creds}" | jq -r '.["dashboards-username"]' )
