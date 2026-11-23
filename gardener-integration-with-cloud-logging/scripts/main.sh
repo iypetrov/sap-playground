@@ -15,31 +15,30 @@ function _main() {
     local _dashboards_endpoint=$( echo "${_cl_creds}" | jq -r '.["dashboards-endpoint"]' )
     local _dashboards_username=$( echo "${_cl_creds}" | jq -r '.["dashboards-username"]' )
     local _dashboards_password=$( echo "${_cl_creds}" | jq -r '.["dashboards-password"]' )
-    local _ingest_endpoint=$( echo "${_cl_creds}" | jq -r '.["ingest-endpoint"]' )
-    local _ingest_username=$( echo "${_cl_creds}" | jq -r '.["ingest-username"]' )
-    local _ingest_password=$( echo "${_cl_creds}" | jq -r '.["ingest-password"]' )
-    local _ingest_mtls_endpoint=$( echo "${_cl_creds}" | jq -r '.["ingest-mtls-endpoint"]' )
-    local _client_ca=$( echo "${_cl_creds}" | jq -r '.["client-ca"]' )
-    local _server_ca=$( echo "${_cl_creds}" | jq -r '.["server-ca"]' )
-    local _ingest_mtls_cert=$( echo "${_cl_creds}" | jq -r '.["ingest-mtls-cert"]' )
-    local _ingest_mtls_key=$( echo "${_cl_creds}" | jq -r '.["ingest-mtls-key"]' )
 
-    # echo "dashboards-endpoint:  ${_dashboards_endpoint}"
-    # echo "dashboards-username:  ${_dashboards_username}"
-    # echo "dashboards-password:  ${_dashboards_password}"
-    # echo "ingest-endpoint:      ${_ingest_endpoint}"
-    # echo "ingest-username:      ${_ingest_username}"
-    # echo "ingest-password:      ${_ingest_password}"
-    # echo "ingest-mtls-endpoint: ${_ingest_mtls_endpoint}"
+    local _ingest_otlp_endpoint=$( echo "${_cl_creds}" | jq -r '.["ingest-otlp-endpoint"]' )
+    local _ingest_otlp_cert=$( echo "${_cl_creds}" | jq -r '.["ingest-otlp-cert"]' )
+    local _ingest_otlp_key=$( echo "${_cl_creds}" | jq -r '.["ingest-otlp-key"]' )
+    local _server_ca=$( echo "${_cl_creds}" | jq -r '.["server-ca"]' )
+
+    kubectl --kubeconfig $KUBECONFIG_VIRTUAL --namespace garden-local \
+        create secret generic cloud-logging-otlp \
+        --from-file=ca.crt=<(printf '%s\n' "${_server_ca}") \
+        --from-file=client.crt=<(printf '%s\n' "${_ingest_otlp_cert}") \
+        --from-file=client.key=<(printf '%s\n' "${_ingest_otlp_key}") \
+		--dry-run=client -o yaml
+
+    echo "dashboards-endpoint:  ${_dashboards_endpoint}"
+    echo "dashboards-username:  ${_dashboards_username}"
+    echo "dashboards-password:  ${_dashboards_password}"
+    echo "ingest-otlp-endpoint: ${_ingest_otlp_endpoint}"
     # echo ""
-    # echo "client-ca:"
-    # echo "${_client_ca}"
     # echo "server-ca:"
     # echo "${_server_ca}"
-    # echo "ingest-mtls-cert:"
-    # echo "${_ingest_mtls_cert}"
-    # echo "ingest-mtls-key:"
-    # echo "${_ingest_mtls_key}"
+    # echo "ingest-otlp-cert:"
+    # echo "${_ingest_otlp_cert}"
+    # echo "ingest-otlp-key:"
+    # echo "${_ingest_otlp_key}"
 }
 
 _main "$@"
